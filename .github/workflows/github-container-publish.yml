@@ -1,0 +1,37 @@
+name: Publish to Github Registry (AMD) - Heroku
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+  workflow_dispatch:    
+
+env:
+  IMAGE: ghcr.io/missemily2022/anasty:heroku
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.0.2
+
+      - name: Login to ghcr.io Registry
+        run: docker login https://ghcr.io -u token -p ${{ secrets.GH_TOKEN }}
+
+      - if: startsWith(github.ref, 'refs/heads/main')
+        run: echo "TAG=latest" >> $GITHUB_ENV
+
+      - if: startsWith(github.ref, 'refs/tags')
+        run: echo "TAG=$(git describe --tags)" >> $GITHUB_ENV
+
+      - name: Build & Push to Github Registry
+        uses: docker/build-push-action@v3.0.0
+        with:
+          context: ./
+          file: ./Dockerfile Base/Dockerfile2
+          push: true
+          platforms: linux/amd64
+          tags: ghcr.io/missemily2022/anasty:heroku
