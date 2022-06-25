@@ -33,4 +33,4 @@ jobs:
           file: ./Dockerfile Base/Dockerfile
           push: true
           platforms: linux/arm64
-          tags: missemily2022/anasty:master-arm
+          tags: izdockerim:master
